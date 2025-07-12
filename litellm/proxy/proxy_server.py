@@ -5721,8 +5721,19 @@ async def get_all_team_and_direct_access_models(
         )
 
         for _model in all_models:
-            model_id = _model.get("model_info", {}).get("id", None)
-            team_only_model_id = _model.get("model_info", {}).get("team_id", None)
+            # skip anything that isn't a dict
+            if not isinstance(_model, dict):
+                continue
+
+            model_info = _model.get("model_info", {})
+            model_id   = model_info.get("id")
+            team_only_model_id = model_info.get("team_id")
+            if model_id is None:
+                continue
+
+            # only expose models that aren't team-only
+            if team_only_model_id is None:
+                _model["model_info"]["access_via_team_ids"] = team_models.get(model_id, [])
             if model_id is not None:
                 can_use_model = False
                 if team_only_model_id is not None:
