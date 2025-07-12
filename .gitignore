@@ -93,3 +93,5 @@ test.py
 
 litellm_config.yaml
 .cursor
+
+llm_env
